@@ -17,14 +17,48 @@ let isTransitioning = false;
 const audio = new Audio('music.mp3');
 audio.loop = true;
 
+// ===== TASKBAR CLOCK =====
+function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    const el = document.getElementById('taskbar-clock');
+    if (el) el.textContent = `${h}:${m}`;
+}
+updateClock();
+setInterval(updateClock, 30000);
+
+// ===== LOG BOX helper =====
+const logMessages = [
+    'Initializing memory module...',
+    'Checking disk space...',
+    'Loading image cache...',
+    'Connecting to heart.exe...',
+    'Scanning photo library...',
+    'Converting HEIC files...',
+    'Assembling memories...',
+    'Almost there...',
+];
+let logIdx = 0;
+function tickLog() {
+    const el = document.getElementById('log-text');
+    if (el && logIdx < logMessages.length) {
+        el.textContent = logMessages[logIdx++];
+    }
+}
+const logInterval = setInterval(tickLog, 900);
+
+// ===== INIT =====
 async function init() {
     const status = document.getElementById('load-status');
     const images = document.querySelectorAll('.polaroid img');
-    
+
     try {
-        for (let img of images) {
+        for (let i = 0; i < images.length; i++) {
+            const img = images[i];
             const src = img.getAttribute('src');
-            status.innerText = `Loading memory...`;
+            status.innerText = `Loading memory ${i + 1} of ${images.length}...`;
+            tickLog();
 
             if (src.toLowerCase().endsWith('.heic')) {
                 const response = await fetch(src);
@@ -39,15 +73,29 @@ async function init() {
                 if (img.complete) res();
             });
         }
-        
-        status.innerText = "Ready.";
+
+        clearInterval(logInterval);
+        status.innerText = 'All files loaded. Ready.';
+        document.getElementById('log-text').textContent = 'Done. Click "Open" to begin.';
         document.getElementById('start-btn').classList.remove('hidden');
+
+        // Stop progress bar animation
+        const bar = document.getElementById('progress-bar');
+        if (bar) {
+            bar.style.animation = 'none';
+            bar.style.width = '100%';
+            bar.style.marginLeft = '0';
+        }
+
     } catch (e) {
+        clearInterval(logInterval);
         status.innerHTML = `Error: ${e}`;
+        document.getElementById('log-text').textContent = `Failed to load: ${e}`;
         document.getElementById('retry-btn').classList.remove('hidden');
     }
 }
 
+// ===== START =====
 document.getElementById('start-btn').addEventListener('click', (e) => {
     e.stopPropagation();
     audio.play().catch(console.error);
@@ -56,6 +104,7 @@ document.getElementById('start-btn').addEventListener('click', (e) => {
     showNext();
 });
 
+// ===== POEM =====
 function showNext() {
     if (isTransitioning) return;
 
@@ -63,7 +112,7 @@ function showNext() {
         isTransitioning = true;
         const textEl = document.getElementById('poetic-text');
         textEl.style.opacity = 0;
-        
+
         setTimeout(() => {
             textEl.innerText = lines[currentLine];
             textEl.style.opacity = 1;
@@ -75,49 +124,51 @@ function showNext() {
     }
 }
 
+// ===== GALLERY =====
 function startScatter() {
     document.getElementById('text-container').classList.add('hidden');
     const gallery = document.getElementById('gallery-container');
     const caption = document.getElementById('gallery-caption');
     gallery.classList.remove('hidden');
-    
+
     const polaroids = document.querySelectorAll('.polaroid');
-    
+
     setTimeout(() => {
         caption.classList.remove('hidden');
         setTimeout(() => caption.style.opacity = 1, 100);
 
         polaroids.forEach((p, i) => {
-            // WIDER SPREAD MULTIPLIERS
             const isMobile = window.innerWidth < 768;
-            const rangeX = isMobile ? 65 : 85; // Increased horizontal spread
-            const rangeY = isMobile ? 55 : 75; // Increased vertical spread
+            const rangeX = isMobile ? 65 : 85;
+            const rangeY = isMobile ? 55 : 75;
 
-            const xDist = (Math.random() * rangeX - (rangeX/2)); 
-            const yDist = (Math.random() * rangeY - (rangeY/2)); 
-            const rot = (Math.random() * 30 - 15); // Random rotation up to 15 degrees
-            
+            const xDist = (Math.random() * rangeX - (rangeX / 2));
+            const yDist = (Math.random() * rangeY - (rangeY / 2));
+            const rot = (Math.random() * 30 - 15);
+
             p.style.transform = `translate(calc(-50% + ${xDist}vw), calc(-50% + ${yDist}vh)) rotate(${rot}deg)`;
-            
-            // FADE OUT TIMING (Animation takes 2s, plus 4s to look at them = 6s total)
+
             if (i === polaroids.length - 1) {
                 setTimeout(() => {
-                    gallery.style.transition = "opacity 2.5s";
+                    gallery.style.transition = 'opacity 2.5s';
                     gallery.style.opacity = 0;
                     setTimeout(() => {
                         gallery.classList.add('hidden');
                         document.getElementById('final-screen').classList.remove('hidden');
                     }, 2500);
-                }, 6000); // 6000ms = 6 seconds wait before starting the fade out
+                }, 6000);
             }
         });
     }, 500);
 }
 
+// ===== CLICK TO ADVANCE =====
 document.addEventListener('click', (e) => {
     if (e.target.id === 'start-btn') return;
-    if (document.getElementById('gallery-container').classList.contains('hidden') && 
-        !document.getElementById('main-content').classList.contains('hidden')) {
+    if (
+        document.getElementById('gallery-container').classList.contains('hidden') &&
+        !document.getElementById('main-content').classList.contains('hidden')
+    ) {
         showNext();
     }
 });

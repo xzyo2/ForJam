@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Memories</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,500&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="loader-content">
+            <div class="heart-spinner"></div>
+            <p id="load-status">Syncing files...</p>
+            <button id="start-btn" class="hidden">Begin</button>
+            <button id="retry-btn" class="hidden" onclick="location.reload()">Retry Connection</button>
+        </div>
+    </div>
+
+    <main id="main-content" class="hidden">
+        <div id="text-container">
+            <p id="poetic-text"></p>
+            <span class="tap-hint">Click anywhere to continue</span>
+        </div>
+
+        <div id="gallery-container" class="hidden">
+            <div class="polaroid-stack">
+                <div class="polaroid"><img src="img/IMG_2032.HEIC" alt=""></div>
+                <div class="polaroid"><img src="img/IMG_2033.HEIC" alt=""></div>
+                <div class="polaroid"><img src="img/IMG_2041.HEIC" alt=""></div>
+                <div class="polaroid"><img src="img/IMG_2046.HEIC" alt=""></div>
+                <div class="polaroid"><img src="img/IMG_2620.JPG" alt=""></div>
+                <div class="polaroid"><img src="img/IMG_2763.JPG" alt=""></div>
+                <div class="polaroid"><img src="img/IMG_2766.JPG" alt=""></div>
+                <div class="polaroid"><img src="img/IMG_3111.JPG" alt=""></div>
+            </div>
+            <p id="gallery-caption" class="hidden">Our dates that means so much to me</p>
+        </div>
+
+        <div id="final-screen" class="hidden">
+            <h1 class="fade-in">Let's try again?</h1>
+        </div>
+    </main>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

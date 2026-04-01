@@ -1,7 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
 :root {
-    --bg: #fff0f3;
-    --accent: #ffb3c1;
-    --text: #594145;
+    --win-bg: #008080;
+    --win-gray: #c0c0c0;
+    --win-dark-blue: #000080;
+    --win-title-end: #1084d0;
+    --win-white: #ffffff;
+    --win-black: #000000;
+    --win-shadow-light: #dfdfdf;
+    --win-shadow-mid: #808080;
+    --win-shadow-dark: #404040;
 }
 
 * {
@@ -10,105 +18,479 @@
 }
 
 body {
-    background-color: var(--bg);
-    color: var(--text);
-    font-family: 'Poppins', sans-serif;
+    background-color: var(--win-bg);
+    color: var(--win-black);
+    font-family: 'VT323', 'Courier New', monospace;
     height: 100dvh; width: 100vw;
     overflow: hidden;
     display: flex; justify-content: center; align-items: center;
+    user-select: none;
+    cursor: default;
 }
 
-/* Loader */
+/* ===== WINDOW CHROME ===== */
+.win-window {
+    background: var(--win-gray);
+    border-top: 2px solid var(--win-white);
+    border-left: 2px solid var(--win-white);
+    border-right: 2px solid var(--win-shadow-dark);
+    border-bottom: 2px solid var(--win-shadow-dark);
+    box-shadow: 1px 1px 0 var(--win-shadow-mid);
+    width: 90vw;
+    max-width: 480px;
+}
+
+.win-titlebar {
+    background: linear-gradient(90deg, var(--win-dark-blue), var(--win-title-end));
+    color: var(--win-white);
+    font-family: 'VT323', monospace;
+    font-size: 1.05rem;
+    padding: 3px 4px 3px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    letter-spacing: 0.3px;
+    line-height: 1;
+    height: 22px;
+}
+
+.win-titlebar-left {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex: 1;
+    min-width: 0;
+}
+
+/* Pixel heart icon in titlebar */
+.title-icon {
+    width: 14px; height: 14px;
+    flex-shrink: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 0;
+}
+
+.win-titlebar-btns {
+    display: flex; gap: 2px;
+    flex-shrink: 0;
+}
+
+.win-btn-sm {
+    width: 17px; height: 15px;
+    background: var(--win-gray);
+    border-top: 1px solid var(--win-white);
+    border-left: 1px solid var(--win-white);
+    border-right: 1px solid var(--win-shadow-dark);
+    border-bottom: 1px solid var(--win-shadow-dark);
+    font-family: 'VT323', monospace;
+    font-size: 0.85rem;
+    color: var(--win-black);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    line-height: 1;
+}
+.win-btn-sm:active {
+    border-top: 1px solid var(--win-shadow-dark);
+    border-left: 1px solid var(--win-shadow-dark);
+    border-right: 1px solid var(--win-white);
+    border-bottom: 1px solid var(--win-white);
+}
+
+.win-body {
+    padding: 10px 12px 12px;
+}
+
+/* ===== SUNKEN INSET BOX ===== */
+.win-inset {
+    border-top: 1px solid var(--win-shadow-mid);
+    border-left: 1px solid var(--win-shadow-mid);
+    border-right: 1px solid var(--win-shadow-light);
+    border-bottom: 1px solid var(--win-shadow-light);
+    background: var(--win-white);
+    padding: 6px 8px;
+    font-size: 1rem;
+    min-height: 2.5em;
+}
+
+/* ===== LOADER ===== */
 #loader {
-    position: fixed; inset: 0; background: var(--bg);
+    position: fixed; inset: 0; background: var(--win-bg);
     display: flex; justify-content: center; align-items: center; z-index: 100;
-    text-align: center;
 }
+
+.loader-content {
+    /* no extra styles needed, .win-window handles it */
+}
+
+.win-status-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 8px;
+}
+
+/* Pixel heart spinner */
 .heart-spinner {
-    width: 40px; height: 40px; background: var(--accent);
-    transform: rotate(45deg); animation: pulse 1s infinite;
-    margin: 0 auto 20px;
+    width: 32px; height: 32px;
+    flex-shrink: 0;
+    position: relative;
+    animation: win-pulse 0.7s steps(1) infinite;
 }
-@keyframes pulse {
-    0%, 100% { transform: rotate(45deg) scale(1); }
-    50% { transform: rotate(45deg) scale(1.2); }
+.heart-spinner::before,
+.heart-spinner::after {
+    content: '';
+    position: absolute;
+    width: 14px; height: 14px;
+    background: #cc0000;
+    border-radius: 50% 50% 0 0;
+}
+.heart-spinner::before { left: 2px; top: 6px; transform: rotate(-45deg); transform-origin: 0 100%; }
+.heart-spinner::after  { right: 2px; top: 6px; transform: rotate(45deg);  transform-origin: 100% 100%; }
+@keyframes win-pulse {
+    0%   { filter: brightness(1); }
+    50%  { filter: brightness(1.4); }
+    100% { filter: brightness(1); }
 }
 
-#start-btn {
-    padding: 12px 30px; border: none; background: var(--accent);
-    color: white; border-radius: 30px; font-family: inherit; cursor: pointer;
+/* ===== PROGRESS BAR ===== */
+.win-progress-wrap {
+    border-top: 1px solid var(--win-shadow-mid);
+    border-left: 1px solid var(--win-shadow-mid);
+    border-right: 1px solid var(--win-shadow-light);
+    border-bottom: 1px solid var(--win-shadow-light);
+    background: var(--win-white);
+    height: 16px;
+    overflow: hidden;
+    margin: 6px 0;
 }
 
-/* Text Section */
+.win-progress-bar {
+    height: 100%;
+    background: var(--win-dark-blue);
+    background-image: repeating-linear-gradient(
+        90deg,
+        transparent 0px, transparent 8px,
+        rgba(255,255,255,0.15) 8px, rgba(255,255,255,0.15) 9px
+    );
+    width: 5%;
+    animation: indeterminate 1.4s linear infinite;
+}
+
+@keyframes indeterminate {
+    0%   { width: 5%;  margin-left: 0%; }
+    50%  { width: 40%; margin-left: 30%; }
+    100% { width: 5%;  margin-left: 95%; }
+}
+
+#load-status {
+    font-family: 'VT323', monospace;
+    font-size: 1.05rem;
+    color: var(--win-black);
+    margin: 2px 0 6px;
+    min-height: 1.3em;
+}
+
+/* ===== SEPARATOR ===== */
+.win-sep {
+    height: 0;
+    border-top: 1px solid var(--win-shadow-mid);
+    border-bottom: 1px solid var(--win-white);
+    margin: 8px 0;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.btn-row {
+    display: flex; justify-content: center; gap: 6px;
+    margin-top: 10px;
+}
+
+.win-action-btn {
+    background: var(--win-gray);
+    color: var(--win-black);
+    font-family: 'VT323', monospace;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    padding: 3px 20px 4px;
+    border-top: 2px solid var(--win-white);
+    border-left: 2px solid var(--win-white);
+    border-right: 2px solid var(--win-shadow-dark);
+    border-bottom: 2px solid var(--win-shadow-dark);
+    cursor: pointer;
+    min-width: 80px;
+    text-align: center;
+    outline: 1px dotted transparent;
+    line-height: 1.2;
+}
+.win-action-btn:hover { outline: 1px dotted var(--win-black); outline-offset: -4px; }
+.win-action-btn:active {
+    border-top: 2px solid var(--win-shadow-dark);
+    border-left: 2px solid var(--win-shadow-dark);
+    border-right: 2px solid var(--win-white);
+    border-bottom: 2px solid var(--win-white);
+    padding-top: 4px; padding-left: 21px;
+}
+
+/* ===== MAIN CONTENT ===== */
+#main-content {
+    position: fixed; inset: 0;
+    display: flex; justify-content: center; align-items: center;
+    z-index: 10;
+    padding-bottom: 30px; /* taskbar space */
+}
+
+/* ===== TEXT / POEM WINDOW ===== */
 #text-container {
-    width: 100%; height: 100%;
-    display: flex; flex-direction: column;
-    justify-content: center; align-items: center;
-    text-align: center; cursor: pointer;
-    padding: 30px;
+    width: 90vw; max-width: 520px;
+    cursor: pointer;
 }
 
 #poetic-text {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem; line-height: 1.8;
+    font-family: 'VT323', monospace;
+    font-size: 1.25rem;
+    line-height: 1.6;
     white-space: pre-line;
-    transition: opacity 0.6s ease-in-out;
-    width: 100%;
-    max-width: 500px;
+    transition: opacity 0.5s ease-in-out;
+    color: var(--win-black);
+}
+
+@media (min-width: 768px) {
+    #poetic-text { font-size: 1.5rem; }
+}
+@media (min-width: 1024px) {
+    #poetic-text { font-size: 1.7rem; }
 }
 
 .tap-hint {
-    position: absolute; bottom: 8%;
-    font-size: 0.65rem; letter-spacing: 2px;
-    text-transform: uppercase; opacity: 0.4;
+    font-family: 'VT323', monospace;
+    font-size: 0.9rem;
+    color: var(--win-shadow-mid);
+    display: block;
+    text-align: right;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
 }
 
-/* Gallery - Mobile Optimized */
+/* ===== GALLERY ===== */
 #gallery-container {
-    position: absolute; inset: 0;
+    position: fixed; inset: 0;
     display: flex; flex-direction: column;
     justify-content: center; align-items: center;
+    padding-bottom: 30px;
+    z-index: 10;
 }
 
 .polaroid-stack {
-    position: relative; 
-    width: 220px; 
+    position: relative;
+    width: 220px;
     height: 300px;
     display: flex; justify-content: center; align-items: center;
 }
 
 .polaroid {
-    position: absolute; background: white; padding: 8px 8px 25px 8px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
-    width: 200px; 
+    position: absolute;
+    background: var(--win-gray);
+    padding: 3px 3px 0 3px;
+    border-top: 2px solid var(--win-white);
+    border-left: 2px solid var(--win-white);
+    border-right: 2px solid var(--win-shadow-dark);
+    border-bottom: 2px solid var(--win-shadow-dark);
+    box-shadow: 2px 2px 0 var(--win-shadow-mid);
+    width: 200px;
     top: 50%; left: 50%; transform: translate(-50%, -50%);
     transition: all 2s cubic-bezier(0.2, 1, 0.3, 1);
 }
 
-.polaroid img { width: 100%; height: 200px; object-fit: cover; background: #fafafa; }
+/* Fake titlebar on each polaroid window */
+.polaroid::before {
+    content: 'memory.jpg - Photo Viewer';
+    display: block;
+    background: linear-gradient(90deg, var(--win-dark-blue), var(--win-title-end));
+    color: var(--win-white);
+    font-family: 'VT323', monospace;
+    font-size: 0.78rem;
+    padding: 2px 4px;
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+}
 
-/* Caption - Pushed Much Lower */
+.polaroid img {
+    width: 100%; height: 200px; object-fit: cover;
+    background: var(--win-shadow-mid);
+    display: block;
+    border-top: 1px solid var(--win-shadow-mid);
+    border-left: 1px solid var(--win-shadow-mid);
+    border-right: 1px solid var(--win-white);
+    border-bottom: 1px solid var(--win-white);
+}
+
 #gallery-caption {
-    margin-top: 140px; /* Increased to keep it away from photos */
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 1rem;
+    margin-top: 140px;
+    font-family: 'VT323', monospace;
+    font-size: 1.1rem;
+    color: var(--win-white);
     opacity: 0;
     transition: opacity 2s;
     z-index: 10;
-    padding: 0 20px;
+    text-align: center;
+    padding: 4px 14px 5px;
+    background: var(--win-dark-blue);
+    border-top: 1px solid var(--win-white);
+    border-left: 1px solid var(--win-white);
+    border-right: 1px solid var(--win-shadow-dark);
+    border-bottom: 1px solid var(--win-shadow-dark);
+    letter-spacing: 0.5px;
+}
+
+/* ===== FINAL SCREEN ===== */
+#final-screen {
+    position: fixed; inset: 0;
+    display: flex; justify-content: center; align-items: center;
+    background: var(--win-bg);
+    z-index: 20;
+    padding-bottom: 30px;
+}
+
+#final-screen h1 {
+    font-family: 'VT323', monospace;
+    font-size: 1.9rem;
+    color: var(--win-black);
+    letter-spacing: 1px;
+}
+
+/* ===== TASKBAR ===== */
+#taskbar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 28px;
+    background: var(--win-gray);
+    border-top: 2px solid var(--win-white);
+    display: flex; align-items: center;
+    padding: 0 4px;
+    gap: 4px;
+    z-index: 300;
+}
+
+#start-button {
+    background: var(--win-gray);
+    border-top: 2px solid var(--win-white);
+    border-left: 2px solid var(--win-white);
+    border-right: 2px solid var(--win-shadow-dark);
+    border-bottom: 2px solid var(--win-shadow-dark);
+    font-family: 'VT323', monospace;
+    font-size: 1.05rem;
+    font-weight: bold;
+    padding: 0 8px 1px 5px;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 4px;
+    color: var(--win-black);
+    height: 20px;
+    letter-spacing: 0.3px;
+}
+#start-button:active {
+    border-top: 2px solid var(--win-shadow-dark);
+    border-left: 2px solid var(--win-shadow-dark);
+    border-right: 2px solid var(--win-white);
+    border-bottom: 2px solid var(--win-white);
+}
+
+/* windows logo pixel */
+.start-logo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 1px;
+    width: 13px; height: 13px;
+    flex-shrink: 0;
+}
+.start-logo span { display: block; }
+.start-logo span:nth-child(1) { background: #f00; }
+.start-logo span:nth-child(2) { background: #0f0; }
+.start-logo span:nth-child(3) { background: #00f; }
+.start-logo span:nth-child(4) { background: #ff0; }
+
+.taskbar-sep {
+    width: 0;
+    border-left: 1px solid var(--win-shadow-mid);
+    border-right: 1px solid var(--win-white);
+    height: 18px;
+    margin: 0 2px;
+}
+
+.taskbar-clock {
+    margin-left: auto;
+    font-family: 'VT323', monospace;
+    font-size: 0.95rem;
+    color: var(--win-black);
+    border-top: 1px solid var(--win-shadow-mid);
+    border-left: 1px solid var(--win-shadow-mid);
+    border-right: 1px solid var(--win-white);
+    border-bottom: 1px solid var(--win-white);
+    padding: 0 8px 1px;
+    min-width: 54px;
     text-align: center;
 }
 
+.taskbar-item {
+    background: var(--win-gray);
+    border-top: 1px solid var(--win-shadow-mid);
+    border-left: 1px solid var(--win-shadow-mid);
+    border-right: 1px solid var(--win-white);
+    border-bottom: 1px solid var(--win-white);
+    font-family: 'VT323', monospace;
+    font-size: 0.9rem;
+    padding: 0 8px 1px;
+    height: 20px;
+    display: flex; align-items: center;
+    color: var(--win-black);
+    max-width: 160px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* ===== DESKTOP ICONS ===== */
+.desktop-icon {
+    position: fixed;
+    top: 12px; left: 14px;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    width: 60px;
+    text-align: center;
+    z-index: 5;
+    cursor: pointer;
+}
+.icon-img {
+    width: 32px; height: 32px;
+    image-rendering: pixelated;
+    /* pixel heart as inline SVG-like thing */
+    display: flex; justify-content: center; align-items: center;
+}
+.icon-label {
+    font-family: 'VT323', monospace;
+    font-size: 0.82rem;
+    color: var(--win-white);
+    text-shadow: 1px 1px 0 var(--win-black);
+    padding: 0 2px;
+    line-height: 1.2;
+    word-break: break-word;
+}
+.desktop-icon:focus .icon-label,
+.desktop-icon:hover .icon-label {
+    background: var(--win-dark-blue);
+    color: var(--win-white);
+}
+
+/* ===== UTILITIES ===== */
 .hidden { display: none !important; }
 .fade-in { animation: fadeIn 2s forwards; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* Desktop Scaling */
+/* ===== DESKTOP SCALING ===== */
 @media (min-width: 1024px) {
-    #poetic-text { font-size: 2.2rem; }
-    .polaroid-stack { width: 350px; height: 450px; }
+    .win-window { max-width: 440px; }
+    .polaroid-stack { width: 350px; height: 460px; }
     .polaroid { width: 320px; }
+    .polaroid::before { font-size: 0.82rem; }
     .polaroid img { height: 320px; }
-    #gallery-caption { font-size: 1.4rem; margin-top: 180px; } /* Pushed even lower on PC */
+    #gallery-caption { font-size: 1.2rem; margin-top: 190px; }
+    #final-screen h1 { font-size: 2.4rem; }
 }
